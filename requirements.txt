@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+pydantic
+SQLAlchemy
+psycopg2-binary
+Shapely
+geojson
+pyproj
+python-jose
+pyjwt
+passlib
+python-multipart
