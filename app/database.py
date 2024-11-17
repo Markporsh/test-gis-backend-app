@@ -6,7 +6,6 @@ from app.settings import DATABASE_URL
 
 engine = create_engine(DATABASE_URL)
 Base = declarative_base()
-Base.metadata.create_all(bind=engine)
 
 
 def get_db():

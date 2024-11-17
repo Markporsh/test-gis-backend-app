@@ -9,7 +9,11 @@ from starlette import status
 from app.database import get_db
 from app.models.users import User
 from app.schemas.users_request import UserRead, UserCreate, Token
-from app.services.auth import pwd_context, authenticate_user, create_access_token
+from app.services.auth import (
+    pwd_context,
+    authenticate_user,
+    create_access_token,
+)
 from app.settings import ACCESS_TOKEN_EXPIRE_MINUTES
 
 router = APIRouter()
@@ -22,7 +26,10 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
         (User.username == user.username)
     ).first()
     if db_user:
-        raise HTTPException(status_code=400, detail="Пользователь уже существует")
+        raise HTTPException(
+            status_code=400,
+            detail="Пользователь уже существует",
+        )
     hashed_password = pwd_context.hash(user.password)
     new_user = User(
         username=user.username,

@@ -7,7 +7,11 @@ from app.database import get_db
 from app.settings import ALGORITHM, SECRET_KEY
 from app.schemas.circle_request import CircleRequest
 from app.services.auth import validate_token, oauth2_scheme
-from app.services.cache_service import generate_cache_id, get_cache_entry, save_cache_entry
+from app.services.cache_service import (
+    generate_cache_id,
+    get_cache_entry,
+    save_cache_entry,
+)
 from app.services.geometry_service import process_geometry
 
 router = APIRouter()
@@ -32,7 +36,16 @@ async def get_circle(
     if cache_entry:
         return json.loads(cache_entry.geojson_data)
 
-    geojson_data = await process_geometry(request.lon, request.lat, request.radius)
-    save_cache_entry(db, cache_id, request.lon, request.lat, request.radius, geojson_data)
+    geojson_data = await process_geometry(
+        request.lon, request.lat, request.radius,
+    )
+    save_cache_entry(
+        db,
+        cache_id,
+        request.lon,
+        request.lat,
+        request.radius,
+        geojson_data,
+    )
 
     return json.loads(geojson_data)

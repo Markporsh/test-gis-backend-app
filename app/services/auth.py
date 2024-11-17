@@ -1,7 +1,6 @@
 from datetime import datetime, timezone, timedelta
 from typing import Union, Optional
 
-import jwt
 from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
@@ -25,7 +24,9 @@ def get_user(db: Session, username: str) -> Optional[UserInDB]:
     return db.query(User).filter(User.username == username).first()
 
 
-def authenticate_user(db: Session, username: str, password: str) -> Union[bool, UserInDB]:
+def authenticate_user(
+        db: Session, username: str, password: str
+) -> Union[bool, UserInDB]:
     user = get_user(db, username)
     if not user:
         return False
@@ -34,13 +35,16 @@ def authenticate_user(db: Session, username: str, password: str) -> Union[bool, 
     return user
 
 
-def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None):
+def create_access_token(
+        data: dict, expires_delta: Union[timedelta, None] = None
+) -> str:
     """
     Создаем токен для пользователя.
     Если не передать expires_delta, то токен действует 15 минут
     """
     to_encode = data.copy()
-    expires_delta = timedelta(minutes=15) if expires_delta is None else expires_delta
+    if expires_delta is None:
+        expires_delta = timedelta(minutes=15)
     expire = datetime.now(timezone.utc) + expires_delta
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
@@ -53,6 +57,10 @@ def validate_token(token: str, secret_key: str, algorithms: list) -> None:
         payload = jwt.decode(token, secret_key, algorithms=algorithms)
         username = payload.get("sub")
         if username is None:
-            raise HTTPException(status_code=401, detail="Недействительные учетные данные")
+            raise HTTPException(
+                status_code=401, detail="Недействительные учетные данные",
+            )
     except JWTError:
-        raise HTTPException(status_code=401, detail="Недействительные учетные данные")
+        raise HTTPException(
+            status_code=401, detail="Недействительные учетные данные",
+        )

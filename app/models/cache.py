@@ -11,4 +11,3 @@ class CacheEntry(Base):
     lat = Column(Float, nullable=False)
     radius = Column(Float, nullable=False)
     geojson_data = Column(String, nullable=False)
-

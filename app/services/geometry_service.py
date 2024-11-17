@@ -8,12 +8,24 @@ from fastapi import HTTPException
 
 
 async def process_geometry(lon: float, lat: float, radius: float) -> str:
+    """
+    Генерирует GeoJSON с круглым полигоном заданного радиуса вокруг точки.
+
+    :param lon: Долгота центра.
+    :param lat: Широта центра.
+    :param radius: Радиус в метрах.
+    :return: Строка в формате GeoJSON.
+    """
     await asyncio.sleep(7)
     try:
         proj_wgs84 = CRS("EPSG:4326")
         proj_aeqd = CRS(proj='aeqd', lat_0=lat, lon_0=lon)
-        transformer_to_aeqd = Transformer.from_crs(proj_wgs84, proj_aeqd, always_xy=True)
-        transformer_to_wgs84 = Transformer.from_crs(proj_aeqd, proj_wgs84, always_xy=True)
+        transformer_to_aeqd = Transformer.from_crs(
+            proj_wgs84, proj_aeqd, always_xy=True,
+        )
+        transformer_to_wgs84 = Transformer.from_crs(
+            proj_aeqd, proj_wgs84, always_xy=True,
+        )
 
         point = Point(lon, lat)
         point_transformed = transform(transformer_to_aeqd.transform, point)
@@ -24,6 +36,12 @@ async def process_geometry(lon: float, lat: float, radius: float) -> str:
         geojson_data = geojson.dumps(geojson_feature)
         return geojson_data
     except ShapelyError:
-        raise HTTPException(status_code=400, detail="Ошибка обработки геометрии.")
+        raise HTTPException(
+            status_code=400,
+            detail="Ошибка обработки геометрии.",
+        )
     except Exception:
-        raise HTTPException(status_code=500, detail="Внутренняя ошибка сервера.")
+        raise HTTPException(
+            status_code=500,
+            detail="Внутренняя ошибка сервера.",
+        )

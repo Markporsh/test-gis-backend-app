@@ -10,3 +10,4 @@ python-jose
 pyjwt
 passlib
 python-multipart
+flake8

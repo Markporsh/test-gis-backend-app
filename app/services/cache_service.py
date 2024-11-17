@@ -15,7 +15,14 @@ def get_cache_entry(db: Session, cache_id: str):
     return db.query(CacheEntry).filter(CacheEntry.id == cache_id).first()
 
 
-def save_cache_entry(db: Session, cache_id: str, lon: float, lat: float, radius: float, geojson_data: str):
+def save_cache_entry(
+        db: Session,
+        cache_id: str,
+        lon: float,
+        lat: float,
+        radius: float,
+        geojson_data: str
+) -> None:
     new_cache_entry = CacheEntry(
         id=cache_id,
         lon=lon,
